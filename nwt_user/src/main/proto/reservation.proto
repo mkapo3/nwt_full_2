@@ -1,0 +1,20 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package proto_generated;
+
+message AddReservationRequest {
+  int64 reservationId = 1;
+  int64 userId = 2;
+  int64 productId = 3;
+  string timestamp = 4;
+  string serviceName = 5;
+}
+
+message AddReservationResponse {
+  string messageReceived = 1;
+}
+
+service ReservationService {
+  rpc addReservation(AddReservationRequest) returns (AddReservationResponse);
+}
+
