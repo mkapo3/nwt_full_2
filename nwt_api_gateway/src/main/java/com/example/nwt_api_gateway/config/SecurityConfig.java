@@ -12,7 +12,11 @@ import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -27,7 +31,8 @@ public class SecurityConfig {
     }
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http.cors().disable().csrf().disable()
+        http.cors(cors -> cors
+                .configurationSource(corsConfigurationSource())).csrf().disable()
                 .authorizeExchange(exchanges -> exchanges
                         .anyExchange().permitAll()
                 )
@@ -35,6 +40,19 @@ public class SecurityConfig {
                 .formLogin(withDefaults())
                 .exceptionHandling();
         return http.build();
+    }
+
+    private CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("localhost:4200"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT",
+                "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Access-Control-Allow-Origin",
+                "Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
