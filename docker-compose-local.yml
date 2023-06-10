@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  mysql-development-user:
+    image: mysql:8.0.32
+    networks:
+      - nwt_network
+    environment:
+      MYSQL_USER: 'username'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_DATABASE: 'nwt_project_base'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - "33066:3306"
+
+  mysql-development-product:
+    image: mysql:8.0.32
+    networks:
+      - nwt_network
+    environment:
+      MYSQL_USER: 'username'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_DATABASE: 'shop'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - "33067:3306"
+
+  mysql-development-order:
+    image: mysql:8.0.32
+    networks:
+      - nwt_network
+    environment:
+      MYSQL_USER: 'username'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_DATABASE: 'nwtbaza'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - "33068:3306"
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - nwt_network
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+networks:
+  nwt_network:
+    external: true
