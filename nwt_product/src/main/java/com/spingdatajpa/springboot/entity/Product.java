@@ -21,6 +21,8 @@ public class Product {
     private List<State> state;
     @ManyToOne
     private Category category;
+
+    private String photo;
     @NotBlank(message = "Spol is mandatory")
     private String spol;
 
@@ -117,6 +119,11 @@ public class Product {
         RezrevacijaId = rezrevacijaId;
     }
 
+    public String getPhoto() {
+        return photo;
+    }
 
-
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
 }
