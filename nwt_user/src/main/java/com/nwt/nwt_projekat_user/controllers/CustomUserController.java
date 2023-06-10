@@ -39,6 +39,16 @@ public class CustomUserController {
 
     }
 
+    @GetMapping(path = "/{email}")
+    @ResponseBody
+    public CustomUser getUser(@PathVariable String email){
+        CustomUser user = customUserDataService.getUserByEmail(email);
+        if(user == null){
+            throw new WrappedException(NOT_FOUND);
+        }
+        return user;
+    }
+
     private CustomUser applyPatchToCustomer(
             JsonPatch patch, CustomUser targetCustomer) throws JsonPatchException, JsonProcessingException {
         JsonNode jsonNode = objectMapper.convertValue(targetCustomer, JsonNode.class);
