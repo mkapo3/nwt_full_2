@@ -15,6 +15,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @EnableWebFluxSecurity
 @Configuration
-public class SecurityConfig {
+public class SecurityConfig implements WebFluxConfigurer {
 
     @Bean
     public HttpStatus defaultStatus() {
