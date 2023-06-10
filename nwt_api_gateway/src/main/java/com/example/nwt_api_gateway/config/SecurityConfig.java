@@ -24,7 +24,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @EnableWebFluxSecurity
 @Configuration
-public class SecurityConfig implements WebFluxConfigurer {
+public class SecurityConfig {
 
     @Bean
     public HttpStatus defaultStatus() {
@@ -33,7 +33,7 @@ public class SecurityConfig implements WebFluxConfigurer {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http.cors(cors -> cors
-                .configurationSource(corsConfigurationSource())).csrf().disable()
+                .disable()).csrf().disable()
                 .authorizeExchange(exchanges -> exchanges
                         .anyExchange().permitAll()
                 )
