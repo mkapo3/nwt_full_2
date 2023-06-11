@@ -27,7 +27,7 @@ public class WishlistController {
 
     @PostMapping("/{email}")
     @ResponseBody
-    public WishlistProduct addCartProduct(@PathVariable String email, @RequestBody WishlistProduct data){
+    public WishlistProduct addWishlsitProduct(@PathVariable String email, @RequestBody WishlistProduct data){
         CustomUser customUser = customUserDataService.getUserByEmail(email);
         Wishlist wishlist = customUser.getWishlist();
         wishlist.getWishlistProducts().add(data);

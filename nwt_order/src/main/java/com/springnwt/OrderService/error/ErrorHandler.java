@@ -3,11 +3,13 @@ package com.springnwt.OrderService.error;
 import com.springnwt.OrderService.error.exception.WrappedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashMap;
@@ -28,6 +30,12 @@ public class ErrorHandler {
         return new ResponseEntity(errorResponse, errorConstant.getStatus());
     }
 
+    @ExceptionHandler({HttpClientErrorException.class})
+    protected ResponseEntity<ErrorResponse> handleHttpClientErrorException(HttpClientErrorException ex, WebRequest request){
+        ErrorResponse errorResponse = ex.getResponseBodyAs(ErrorResponse.class);
+        return new ResponseEntity(errorResponse, HttpStatusCode.valueOf(errorResponse.getStatus()));
+    }
+
     @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request){
         ErrorConstants errorConstant = ErrorConstants.INVALID_ARGUMENTS;
@@ -44,6 +52,18 @@ public class ErrorHandler {
 
         errorResponse.setErrors(errors);
         return new ResponseEntity(errorResponse, errorConstant.getStatus());
+    }
+
+    @ExceptionHandler({Exception.class})
+    protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(Exception ex, WebRequest request){
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setCode(10000);
+        errorResponse.setMessage(ex.getMessage());
+        errorResponse.setStatus(400);
+        errorResponse.setErrors(new HashMap<>());
+
+        return new ResponseEntity(errorResponse, HttpStatusCode.valueOf(400));
     }
 
     private ErrorResponse createErrorResponse(ErrorConstants errorConstant){

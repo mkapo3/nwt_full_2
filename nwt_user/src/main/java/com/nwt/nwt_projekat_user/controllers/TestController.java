@@ -7,6 +7,7 @@ import com.nwt.nwt_projekat_user.models.Order;
 import com.nwt.nwt_projekat_user.repository.cart.CartDataService;
 import com.nwt.nwt_projekat_user.repository.user.CustomUserDataService;
 import com.nwt.nwt_projekat_user.services.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +26,8 @@ public class TestController {
 
     @GetMapping("/test-external-service")
     @ResponseBody
-    public CategoryResponse testNedinaService(){
-        return productService.getCategory(1L);
+    public CategoryResponse testNedinaService(HttpServletRequest request){
+        return productService.getCategory(1L, request.getHeader("Authorization"));
     }
 
     @PostMapping("")

@@ -12,6 +12,8 @@ public class Orders {
     private String address;
     private String city;
     private String zipCode;
+
+    private Long userId;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
     private Cart cart;
@@ -64,5 +66,13 @@ public class Orders {
 
     public void setCart(Cart cart) {
         this.cart = cart;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

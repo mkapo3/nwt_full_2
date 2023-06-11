@@ -3,8 +3,12 @@ package com.nwt.nwt_projekat_user.clients;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 public class ProductClient {
@@ -22,9 +26,10 @@ public class ProductClient {
         this.restTemplate = new RestTemplate();
     }
 
-    public JsonNode getRequest(String uri){
+    public JsonNode getRequest(String uri, MultiValueMap<String, String> headers){
         productHost = discoveryClient.getInstances("PRODUCTSERVICE").get(0).getUri().toString();
-        ResponseEntity<String> response = this.restTemplate.getForEntity(productHost + uri, String.class);
+        HttpEntity<ObjectNode> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = this.restTemplate.exchange(productHost + uri, HttpMethod.GET, entity, String.class);
         JsonNode node = null;
         try {
             node = MAPPER.readTree(response.getBody());

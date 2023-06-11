@@ -5,11 +5,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
-import com.nwt.nwt_projekat_user.error.ErrorConstants;
 import com.nwt.nwt_projekat_user.error.exception.WrappedException;
 import com.nwt.nwt_projekat_user.models.CustomUser;
 import com.nwt.nwt_projekat_user.repository.user.CustomUserDataService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import static com.nwt.nwt_projekat_user.error.ErrorConstants.NOT_FOUND;
@@ -39,14 +43,28 @@ public class CustomUserController {
 
     }
 
-    @GetMapping(path = "/{email}")
+    @GetMapping(path = "/admin/{id}")
     @ResponseBody
-    public CustomUser getUser(@PathVariable String email){
-        CustomUser user = customUserDataService.getUserByEmail(email);
+    public CustomUser getUserById(@PathVariable Long id){
+        CustomUser user = customUserDataService.getUserById(id);
         if(user == null){
             throw new WrappedException(NOT_FOUND);
         }
         return user;
+    }
+
+
+    @GetMapping(path = "/{email}")
+    @ResponseBody
+    public ResponseEntity<CustomUser> getUser(HttpServletRequest request, @PathVariable String email){
+        CustomUser user = customUserDataService.getUserByEmail(email);
+        if(user == null){
+            throw new WrappedException(NOT_FOUND);
+        }
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Authorization", request.getHeader("Authorization"));
+        ResponseEntity<CustomUser> responseEntity = new ResponseEntity<>(user, headers, HttpStatus.SC_OK);
+        return responseEntity;
     }
 
     private CustomUser applyPatchToCustomer(

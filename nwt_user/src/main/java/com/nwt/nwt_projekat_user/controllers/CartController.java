@@ -8,6 +8,7 @@ import com.nwt.nwt_projekat_user.repository.cart.CartDataService;
 import com.nwt.nwt_projekat_user.repository.cart_product.CartProductDataService;
 import com.nwt.nwt_projekat_user.repository.user.CustomUserDataService;
 import com.nwt.nwt_projekat_user.request_response.cart.CartResponse;
+import com.nwt.nwt_projekat_user.services.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -27,7 +28,10 @@ public class CartController {
     @Autowired
     CartProductDataService cartProductDataService;
 
-    @GetMapping("/{id}")
+    @Autowired
+    ProductService productService;
+
+    @GetMapping("/admin/{id}")
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public CartResponse getCart(@PathVariable Long id, HttpServletRequest request){
@@ -41,9 +45,10 @@ public class CartController {
         return cartResponse;
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/admin/{id}")
     @ResponseBody
-    public CartProduct addCartProduct(@PathVariable Long id, @RequestBody CartProduct data){
+    public CartProduct addCartProduct(HttpServletRequest request, @PathVariable Long id, @RequestBody CartProduct data){
+        productService.getProduct(data.getProductId(), request.getHeader("Authorization"));
         Cart cart = cartDataService.findCartById(id);
         if (cart == null){
             throw new WrappedException(NOT_FOUND);
