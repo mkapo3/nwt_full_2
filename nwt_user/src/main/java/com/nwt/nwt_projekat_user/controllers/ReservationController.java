@@ -8,12 +8,10 @@ import com.nwt.nwt_projekat_user.repository.reservation.ReservationDataService;
 import com.nwt.nwt_projekat_user.repository.user.CustomUserDataService;
 import com.nwt.nwt_projekat_user.request_response.GeneralSuccessResponse;
 import com.nwt.nwt_projekat_user.request_response.reservation.ReservationReq;
-import com.nwt.nwt_projekat_user.services.CurrentUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static com.nwt.nwt_projekat_user.error.ErrorConstants.NOT_FOUND;
@@ -26,19 +24,16 @@ public class ReservationController {
     ReservationDataService reservationDataService;
 
     @Autowired
-    CurrentUserService currentUserService;
-
-    @Autowired
     CustomUserDataService customUserDataService;
 
     @Autowired
     ReservationClient reservationClient;
 
-    @PostMapping("")
+    @PostMapping("/{email}")
     @ResponseBody
-    public GeneralSuccessResponse createReservation(@RequestBody ReservationReq reservationReq){
+    public GeneralSuccessResponse createReservation(@PathVariable String email, @RequestBody ReservationReq reservationReq){
 
-        CustomUser customUser = customUserDataService.getUserByEmail(currentUserService.getEmail());
+        CustomUser customUser = customUserDataService.getUserByEmail(email);
         if (customUser == null){
             customUser = customUserDataService.getUserById(reservationReq.getUserId());
         }

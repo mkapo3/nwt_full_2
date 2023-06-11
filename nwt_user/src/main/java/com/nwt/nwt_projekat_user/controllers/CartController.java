@@ -8,7 +8,6 @@ import com.nwt.nwt_projekat_user.repository.cart.CartDataService;
 import com.nwt.nwt_projekat_user.repository.cart_product.CartProductDataService;
 import com.nwt.nwt_projekat_user.repository.user.CustomUserDataService;
 import com.nwt.nwt_projekat_user.request_response.cart.CartResponse;
-import com.nwt.nwt_projekat_user.services.CurrentUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -25,10 +24,6 @@ public class CartController {
 
     @Autowired
     CustomUserDataService customUserDataService;
-
-    @Autowired
-    CurrentUserService currentUserService;
-
     @Autowired
     CartProductDataService cartProductDataService;
 
@@ -57,17 +52,17 @@ public class CartController {
         return cartProductDataService.createOrUpdateCartProduct(data);
     }
 
-    @GetMapping("")
+    @GetMapping("/{email}")
     @ResponseBody
-    public Cart getCurrentUserCart(){
-        CustomUser customUser = customUserDataService.getUserByEmail(currentUserService.getEmail());
+    public Cart getCurrentUserCart(@PathVariable String email){
+        CustomUser customUser = customUserDataService.getUserByEmail(email);
         return customUser.getCart();
     }
 
-    @PostMapping("")
+    @PostMapping("/{email}")
     @ResponseBody
-    public CartProduct addCurrentUserCartProduct(@RequestBody CartProduct data){
-        Cart cart = customUserDataService.getUserByEmail(currentUserService.getEmail()).getCart();
+    public CartProduct addCurrentUserCartProduct(@PathVariable String email, @RequestBody CartProduct data){
+        Cart cart = customUserDataService.getUserByEmail(email).getCart();
         cart.getCartProducts().add(data);
         cartDataService.createOrUpdateCart(cart);
         return data;

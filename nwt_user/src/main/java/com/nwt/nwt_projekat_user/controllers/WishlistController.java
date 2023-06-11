@@ -1,21 +1,16 @@
 package com.nwt.nwt_projekat_user.controllers;
 
-import com.nwt.nwt_projekat_user.error.exception.WrappedException;
-import com.nwt.nwt_projekat_user.models.*;
+import com.nwt.nwt_projekat_user.models.CustomUser;
+import com.nwt.nwt_projekat_user.models.Wishlist;
+import com.nwt.nwt_projekat_user.models.WishlistProduct;
 import com.nwt.nwt_projekat_user.repository.user.CustomUserDataService;
 import com.nwt.nwt_projekat_user.repository.wishlist.WishlistDataService;
-import com.nwt.nwt_projekat_user.services.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import static com.nwt.nwt_projekat_user.error.ErrorConstants.NOT_FOUND;
 
 @RestController
 @RequestMapping("/user/wishlist")
 public class WishlistController {
-
-    @Autowired
-    CurrentUserService currentUserService;
 
     @Autowired
     CustomUserDataService customUserDataService;
@@ -23,17 +18,17 @@ public class WishlistController {
     @Autowired
     WishlistDataService wishlistDataService;
 
-    @GetMapping("")
+    @GetMapping("{email}")
     @ResponseBody
-    public Wishlist getCurrentUserWishlist(){
-        CustomUser customUser = customUserDataService.getUserByEmail(currentUserService.getEmail());
+    public Wishlist getCurrentUserWishlist(@PathVariable String email){
+        CustomUser customUser = customUserDataService.getUserByEmail(email);
         return customUser.getWishlist();
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/{email}")
     @ResponseBody
-    public WishlistProduct addCartProduct(@PathVariable Long id, @RequestBody WishlistProduct data){
-        CustomUser customUser = customUserDataService.getUserByEmail(currentUserService.getEmail());
+    public WishlistProduct addCartProduct(@PathVariable String email, @RequestBody WishlistProduct data){
+        CustomUser customUser = customUserDataService.getUserByEmail(email);
         Wishlist wishlist = customUser.getWishlist();
         wishlist.getWishlistProducts().add(data);
         wishlistDataService.createOrUpdateWishlist(wishlist);
