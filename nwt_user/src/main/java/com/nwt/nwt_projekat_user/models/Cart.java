@@ -14,10 +14,10 @@ public class Cart {
     private Long id;
 
     @Column(columnDefinition = "boolean default false")
-    private Boolean deleted;
+    private Boolean deleted = false;
 
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "cart")
+    @OneToOne(mappedBy = "cart")
     private CustomUser customUser;
 
     @JsonIgnore

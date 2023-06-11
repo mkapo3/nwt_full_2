@@ -26,5 +26,8 @@ public class CartDataService {
         cartRepository.save(customUser);
     }
 
+    public void remove(Cart cart) {
+        cartRepository.delete(cart);
+    }
 }
 

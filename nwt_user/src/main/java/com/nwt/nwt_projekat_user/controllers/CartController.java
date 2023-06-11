@@ -12,8 +12,10 @@ import com.nwt.nwt_projekat_user.request_response.cart.CartResponse;
 import com.nwt.nwt_projekat_user.services.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
 
 import static com.nwt.nwt_projekat_user.error.ErrorConstants.NOT_FOUND;
@@ -32,6 +34,21 @@ public class CartController {
 
     @Autowired
     ProductService productService;
+
+    @PostMapping("/create/{userId}")
+    @ResponseBody
+    @Transactional
+    public GeneralSuccessResponse createCart(@PathVariable Long userId){
+        CustomUser customUser = customUserDataService.getUserById(userId);
+        cartDataService.remove(customUser.getCart());
+        Cart cart = new Cart();
+        customUser.setCart(cart);
+        cart.setCartProducts(new HashSet<>());
+
+        cartDataService.createOrUpdateCart(cart);
+        customUserDataService.createOrUpdateUser(customUser);
+        return new GeneralSuccessResponse();
+    }
 
     @GetMapping("/admin/{id}")
     @ResponseBody

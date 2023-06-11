@@ -14,6 +14,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,7 @@ public class OrdersController {
 
 
     @PostMapping("")
+    @Transactional
     public Orders newOrder(HttpServletRequest request, @RequestBody Orders order) {
         String host = discoveryClient.getInstances("NWTPROJEKATUSER").get(0).getUri().toString();
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -63,6 +65,7 @@ public class OrdersController {
         LocalDateTime localDateTime = LocalDateTime.now();
         Orders newOrder = orderService.createOrUpdate(order);
         orderClient.addOrder(newOrder.getId(), localDateTime);
+        restTemplate.exchange(host + "/user/cart/create/" + order.getUserId(), HttpMethod.POST, entity, String.class);
 
         return newOrder;
     }
