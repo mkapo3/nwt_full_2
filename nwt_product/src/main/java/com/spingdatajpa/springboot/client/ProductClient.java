@@ -4,6 +4,7 @@ import com.spingdatajpa.springboot.service.ConfigurationManager;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import proto_generated.AddProductRequest;
@@ -20,9 +21,13 @@ public class ProductClient {
     @Autowired
     ConfigurationManager configurationManager;
 
+    @Autowired
+    DiscoveryClient discoveryClient;
+
     @PostConstruct
     public void init (){
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8180)
+        String host = discoveryClient.getInstances("NWTPROJEKATUSER").get(0).getHost();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(host, 8180)
                 .usePlaintext()
                 .build();
         stub = ProductServiceGrpc.newBlockingStub(channel);
