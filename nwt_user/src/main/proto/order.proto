@@ -1,0 +1,18 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package proto_generated;
+
+message AddOrderRequest {
+  int64 orderId = 1;
+  string timestamp = 2;
+  string serviceName = 3;
+}
+
+message AddOrderResponse {
+  string messageReceived = 1;
+}
+
+service OrderService {
+  rpc addOrder(AddOrderRequest) returns (AddOrderResponse);
+}
+

@@ -1,22 +1,21 @@
-package com.nwt.nwt_projekat_user.clients;
+package com.spingdatajpa.springboot.client;
 
-import com.nwt.nwt_projekat_user.services.ConfigurationManager;
+import com.spingdatajpa.springboot.service.ConfigurationManager;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import proto_generated.AddReservationRequest;
-import proto_generated.ReservationServiceGrpc;
+import proto_generated.AddProductRequest;
+import proto_generated.ProductServiceGrpc;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
-public class ReservationClient {
+public class ProductClient {
 
-    private ReservationServiceGrpc.ReservationServiceBlockingStub stub;
+    private ProductServiceGrpc.ProductServiceBlockingStub stub;
 
     @Autowired
     ConfigurationManager configurationManager;
@@ -26,12 +25,12 @@ public class ReservationClient {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8180)
                 .usePlaintext()
                 .build();
-        stub = ReservationServiceGrpc.newBlockingStub(channel);
+        stub = ProductServiceGrpc.newBlockingStub(channel);
     }
 
-    public void addReservation(Long userId, LocalDateTime createdDateTime, Long productId){
-        stub.addReservation(AddReservationRequest.newBuilder()
-                .setUserId(userId)
+    @Async
+    public void addProduct(Integer productId, LocalDateTime createdDateTime){
+        stub.addProduct(AddProductRequest.newBuilder()
                 .setTimestamp(createdDateTime.toString())
                 .setProductId(productId)
                 .setServiceName(configurationManager.getSpringApplicationName())

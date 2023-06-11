@@ -2,6 +2,7 @@ package com.spingdatajpa.springboot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.spingdatajpa.springboot.client.ProductClient;
 import com.spingdatajpa.springboot.entity.Product;
 import com.spingdatajpa.springboot.entity.State;
 import com.spingdatajpa.springboot.error.exception.WrappedException;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.spingdatajpa.springboot.error.ErrorConstants.NOT_FOUND;
@@ -25,12 +27,15 @@ public class ProductController {
 
     private final Queue queue;
 
+    private final ProductClient productClient;
+
     private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public ProductController(ProductService productService, RabbitTemplate template, Queue queue) {
+    public ProductController(ProductService productService, RabbitTemplate template, Queue queue, ProductClient productClient) {
         this.productService = productService;
         this.template = template;
         this.queue = queue;
+        this.productClient = productClient;
     }
 
     @GetMapping("product/{id}")
@@ -89,7 +94,10 @@ public class ProductController {
     }
     @PostMapping("create")
     public Product createProduct( @RequestBody Product product){
-        return productService.createProduct(product);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Product newProduct = productService.createProduct(product);
+        productClient.addProduct(newProduct.getId(), localDateTime);
+        return newProduct;
     }
 
 

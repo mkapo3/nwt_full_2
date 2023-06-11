@@ -1,6 +1,8 @@
 package com.nwt.nwt_projekat_user;
 
 import com.nwt.nwt_projekat_user.repository.system_events_log.SystemEventsLogService;
+import com.nwt.nwt_projekat_user.system_event_services.reservation.OrderSystemEventsService;
+import com.nwt.nwt_projekat_user.system_event_services.reservation.ProductSystemEventsService;
 import com.nwt.nwt_projekat_user.system_event_services.reservation.ReservationSystemEventsService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -24,7 +26,9 @@ public class NwtProjekatUserApplication {
 
         Server server = ServerBuilder
                 .forPort(8180)
-                .addService(new ReservationSystemEventsService(applicationContext.getBean(SystemEventsLogService.class))).build();
+                .addService(new ReservationSystemEventsService(applicationContext.getBean(SystemEventsLogService.class)))
+                .addService(new ProductSystemEventsService(applicationContext.getBean(SystemEventsLogService.class)))
+                .addService(new OrderSystemEventsService(applicationContext.getBean(SystemEventsLogService.class))).build();
         try {
             server.start();
             server.awaitTermination();

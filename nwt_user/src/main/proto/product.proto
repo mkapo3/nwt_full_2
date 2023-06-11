@@ -1,0 +1,18 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package proto_generated;
+
+message AddProductRequest {
+  int64 productId = 1;
+  string timestamp = 2;
+  string serviceName = 3;
+}
+
+message AddProductResponse {
+  string messageReceived = 1;
+}
+
+service ProductService {
+  rpc addProduct(AddProductRequest) returns (AddProductResponse);
+}
+
