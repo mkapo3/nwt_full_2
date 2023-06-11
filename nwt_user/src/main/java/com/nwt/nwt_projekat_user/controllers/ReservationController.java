@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.nwt.nwt_projekat_user.error.ErrorConstants.NOT_FOUND;
 
@@ -58,6 +59,16 @@ public class ReservationController {
             throw new WrappedException(NOT_FOUND);
         }
         return reservation;
+    }
+
+    @GetMapping("/reservations/{email}")
+    @ResponseBody
+    public List<Reservation> getAllUserReservations(@PathVariable String email, HttpServletRequest request){
+        CustomUser user = customUserDataService.getUserByEmail(email);
+        if(user == null){
+            throw new WrappedException(NOT_FOUND);
+        }
+        return reservationDataService.getReservationByUser(user);
     }
 
 

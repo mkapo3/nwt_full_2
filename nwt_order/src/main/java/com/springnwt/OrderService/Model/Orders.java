@@ -2,6 +2,7 @@ package com.springnwt.OrderService.Model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Orders {
@@ -13,19 +14,18 @@ public class Orders {
     private String city;
     private String zipCode;
 
+    @NotNull
     private Long userId;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cart_id", referencedColumnName = "id")
-    private Cart cart;
 
+    @NotNull
+    private Long cartId;
     public Orders() {
     }
 
-    public Orders(String address, String city, String zipCode, Cart cart) {
+    public Orders(String address, String city, String zipCode) {
         this.address = address;
         this.city = city;
         this.zipCode = zipCode;
-        this.cart = cart;
     }
 
     public Long getId() {
@@ -60,14 +60,6 @@ public class Orders {
         this.zipCode = zipCode;
     }
 
-    public Cart getCart() {
-        return cart;
-    }
-
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
-
     public Long getUserId() {
         return userId;
     }
@@ -75,4 +67,14 @@ public class Orders {
     public void setUserId(Long userId) {
         this.userId = userId;
     }
+
+    public Long getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Long cartId) {
+        this.cartId = cartId;
+    }
 }
+
+

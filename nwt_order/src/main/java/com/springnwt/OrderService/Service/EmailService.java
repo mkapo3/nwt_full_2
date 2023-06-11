@@ -1,5 +1,7 @@
 package com.springnwt.OrderService.Service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -7,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
+
+    protected final Log logger = LogFactory.getLog(this.getClass());
 
     @Autowired
     private JavaMailSender mailSender;
@@ -19,6 +23,6 @@ public class EmailService {
         message.setText(body);
 
         mailSender.send(message);
-        System.out.println("mail sent");
+        logger.info("mail_sent: " + to);
     }
 }

@@ -1,11 +1,13 @@
 package com.springnwt.OrderService.Controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.springnwt.OrderService.Model.Orders;
 import com.springnwt.OrderService.Repository.OrderRepository;
+import com.springnwt.OrderService.Service.EmailService;
+import com.springnwt.OrderService.Service.OrderService;
 import com.springnwt.OrderService.client.OrderClient;
-import com.springnwt.OrderService.error.exception.WrappedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -18,14 +20,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-
-import static com.springnwt.OrderService.error.ErrorConstants.NOT_FOUND;
+import java.util.List;
 
 @RestController
 @RequestMapping("/order")
 public class OrdersController {
     @Autowired
-    private OrderRepository orderRepository;
+    private OrderService orderService;
 
     @Autowired
     private OrderClient orderClient;
@@ -36,27 +37,38 @@ public class OrdersController {
     @Autowired
     private DiscoveryClient discoveryClient;
 
+    @Autowired
+    private EmailService emailService;
+
     private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 
     @PostMapping("")
-    Orders newOrder(HttpServletRequest request, @RequestBody Orders order) {
+    public Orders newOrder(HttpServletRequest request, @RequestBody Orders order) {
         String host = discoveryClient.getInstances("NWTPROJEKATUSER").get(0).getUri().toString();
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", request.getHeader("Authorization"));
         HttpEntity<ObjectNode> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(host + "/user/custom-user/admin/" + order.getUserId(), HttpMethod.GET, entity, String.class);
-        if (response.getBody() == null){
-            throw new WrappedException(NOT_FOUND);
+        ResponseEntity<String> responseCart = restTemplate.exchange(host + "/user/cart/admin/" + order.getCartId(), HttpMethod.GET, entity, String.class);
+        try {
+            ObjectNode responseBody = OBJECT_MAPPER.readValue(response.getBody(), ObjectNode.class);
+            ObjectNode responseCartBody = OBJECT_MAPPER.readValue(responseCart.getBody(), ObjectNode.class);
+            emailService.sendEmail(responseBody.get("email").asText(),
+                    "Order added",
+                    "Your order has been added.\nYour cart's id is: " + responseCartBody.get("id"));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
         LocalDateTime localDateTime = LocalDateTime.now();
-        Orders newOrder = orderRepository.save(order);
+        Orders newOrder = orderService.createOrUpdate(order);
         orderClient.addOrder(newOrder.getId(), localDateTime);
+
         return newOrder;
     }
 
     @GetMapping("/orders")
-    public @ResponseBody Iterable<Orders> getAllOrders(){
-        return orderRepository.findAll();
+    public @ResponseBody List<Orders> getAllOrders(){
+        return orderService.findAll();
     }
 }

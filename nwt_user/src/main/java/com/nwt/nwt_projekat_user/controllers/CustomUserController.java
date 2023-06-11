@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class CustomUserController {
 
     @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
     @ResponseBody
+    @Secured("ROLE_ADMIN")
     public CustomUser editUser(@PathVariable Long id, @RequestBody JsonPatch patch){
         try {
             CustomUser customUser = customUserDataService.getUserById(id);

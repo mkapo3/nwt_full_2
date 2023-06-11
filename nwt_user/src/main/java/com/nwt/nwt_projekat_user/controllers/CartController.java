@@ -4,6 +4,7 @@ import com.nwt.nwt_projekat_user.error.exception.WrappedException;
 import com.nwt.nwt_projekat_user.models.Cart;
 import com.nwt.nwt_projekat_user.models.CartProduct;
 import com.nwt.nwt_projekat_user.models.CustomUser;
+import com.nwt.nwt_projekat_user.models.WishlistProduct;
 import com.nwt.nwt_projekat_user.repository.cart.CartDataService;
 import com.nwt.nwt_projekat_user.repository.cart_product.CartProductDataService;
 import com.nwt.nwt_projekat_user.repository.user.CustomUserDataService;
@@ -14,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.nwt.nwt_projekat_user.error.ErrorConstants.NOT_FOUND;
+import static java.lang.Long.parseLong;
 
 @RestController
 @RequestMapping("/user/cart")
@@ -33,7 +37,6 @@ public class CartController {
 
     @GetMapping("/admin/{id}")
     @ResponseBody
-    @Secured("ROLE_ADMIN")
     public CartResponse getCart(@PathVariable Long id, HttpServletRequest request){
         Cart cart = cartDataService.findCartById(id);
         if (cart == null){
@@ -71,6 +74,16 @@ public class CartController {
         cart.getCartProducts().add(data);
         cartDataService.createOrUpdateCart(cart);
         return data;
+    }
+
+    @GetMapping("/cart-products/{email}")
+    @ResponseBody
+    public List<CartProduct> getAllUserCartProducts(@PathVariable String email, HttpServletRequest request){
+        CustomUser user = customUserDataService.getUserByEmail(email);
+        if(user == null){
+            throw new WrappedException(NOT_FOUND);
+        }
+        return cartProductDataService.findAllCartProductsByCart(user.getCart());
     }
 
 }
