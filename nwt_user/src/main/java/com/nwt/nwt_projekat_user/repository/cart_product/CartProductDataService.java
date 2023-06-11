@@ -29,5 +29,9 @@ public class CartProductDataService {
         cartProductRepository.removeCartProductByProductId(productId);
     }
 
+    public void removeCartProduct(Long cartProductId){
+        cartProductRepository.deleteById(cartProductId);
+    }
+
 }
 

@@ -30,5 +30,9 @@ public class WishlistProductDataService {
         wishlistProductRepository.removeWishlistProductByProductId(productId);
     }
 
+    public void removeWishlistProduct(Long wishlistProductId){
+        wishlistProductRepository.deleteById(wishlistProductId);
+    }
+
 }
 

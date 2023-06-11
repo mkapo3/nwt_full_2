@@ -14,7 +14,7 @@ public class WishlistProduct {
 
     private Integer quantity;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name="wishlist_id", nullable=false)
     private Wishlist wishlist;
 

@@ -4,21 +4,19 @@ import com.nwt.nwt_projekat_user.error.exception.WrappedException;
 import com.nwt.nwt_projekat_user.models.Cart;
 import com.nwt.nwt_projekat_user.models.CartProduct;
 import com.nwt.nwt_projekat_user.models.CustomUser;
-import com.nwt.nwt_projekat_user.models.WishlistProduct;
 import com.nwt.nwt_projekat_user.repository.cart.CartDataService;
 import com.nwt.nwt_projekat_user.repository.cart_product.CartProductDataService;
 import com.nwt.nwt_projekat_user.repository.user.CustomUserDataService;
+import com.nwt.nwt_projekat_user.request_response.GeneralSuccessResponse;
 import com.nwt.nwt_projekat_user.request_response.cart.CartResponse;
 import com.nwt.nwt_projekat_user.services.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static com.nwt.nwt_projekat_user.error.ErrorConstants.NOT_FOUND;
-import static java.lang.Long.parseLong;
 
 @RestController
 @RequestMapping("/user/cart")
@@ -67,12 +65,19 @@ public class CartController {
         return customUser.getCart();
     }
 
+    @DeleteMapping("/cart-product/{id}")
+    @ResponseBody
+    public GeneralSuccessResponse removeCartProduct(@PathVariable Long id){
+        cartProductDataService.removeCartProduct(id);
+        return new GeneralSuccessResponse();
+    }
+
     @PostMapping("/{email}")
     @ResponseBody
     public CartProduct addCurrentUserCartProduct(@PathVariable String email, @RequestBody CartProduct data){
         Cart cart = customUserDataService.getUserByEmail(email).getCart();
-        cart.getCartProducts().add(data);
-        cartDataService.createOrUpdateCart(cart);
+        data.setCart(cart);
+        cartProductDataService.createOrUpdateCartProduct(data);
         return data;
     }
 

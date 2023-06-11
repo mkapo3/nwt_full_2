@@ -15,7 +15,7 @@ public class CartProduct {
 
     private Integer quantity;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name="cart_id", nullable=false)
     private Cart cart;
 

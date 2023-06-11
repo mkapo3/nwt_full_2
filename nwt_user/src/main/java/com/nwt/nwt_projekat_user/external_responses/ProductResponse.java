@@ -1,9 +1,12 @@
 package com.nwt.nwt_projekat_user.external_responses;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductResponse {
     private Long id;
 
-    private String naziv;
+    private String name;
 
     public Long getId() {
         return id;
@@ -13,12 +16,12 @@ public class ProductResponse {
         this.id = id;
     }
 
-    public String getNaziv() {
-        return naziv;
+    public String getName() {
+        return name;
     }
 
-    public void setNaziv(String naziv) {
-        this.naziv = naziv;
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

@@ -7,6 +7,7 @@ import com.nwt.nwt_projekat_user.models.WishlistProduct;
 import com.nwt.nwt_projekat_user.repository.user.CustomUserDataService;
 import com.nwt.nwt_projekat_user.repository.wishlist.WishlistDataService;
 import com.nwt.nwt_projekat_user.repository.wishlist_product.WishlistProductDataService;
+import com.nwt.nwt_projekat_user.request_response.GeneralSuccessResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -40,9 +41,16 @@ public class WishlistController {
     public WishlistProduct addWishlistProduct(@PathVariable String email, @RequestBody WishlistProduct data){
         CustomUser customUser = customUserDataService.getUserByEmail(email);
         Wishlist wishlist = customUser.getWishlist();
-        wishlist.getWishlistProducts().add(data);
-        wishlistDataService.createOrUpdateWishlist(wishlist);
+        data.setWishlist(wishlist);
+        wishlistProductDataService.createOrUpdateWishlistProduct(data);
         return data;
+    }
+
+    @DeleteMapping("/wishlist-product/{id}")
+    @ResponseBody
+    public GeneralSuccessResponse removeWishlistProduct(@PathVariable Long id){
+        wishlistProductDataService.removeWishlistProduct(id);
+        return new GeneralSuccessResponse();
     }
 
     @GetMapping("/wishlist-products/{email}")
