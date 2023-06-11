@@ -13,5 +13,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     List<Product> findAllByName(String name);
 
+    @Query("select p from Product p where p.name like %:search%")
+    List<Product> findAllSearch(String search);
+
     Product findAllById(int id);
 }

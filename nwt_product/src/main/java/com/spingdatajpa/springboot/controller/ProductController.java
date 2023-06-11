@@ -61,8 +61,8 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public List<Product> getAllProducts(){
-        return productService.getAllProducts();
+    public List<Product> getAllProducts(@RequestParam(defaultValue = "") String search){
+        return productService.getAllProducts(search);
     }
     @PutMapping("/product/update/{id}")
     public Product updateProduct(@PathVariable int id, @RequestBody Product product){

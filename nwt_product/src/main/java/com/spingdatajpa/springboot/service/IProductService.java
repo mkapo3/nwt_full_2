@@ -11,7 +11,7 @@ public interface IProductService {
     public Product createProduct(Product product);
     public void deleteProduct(int id);
     public Product getProduct(int id);
-    public List<Product> getAllProducts();
+    public List<Product> getAllProducts(String search);
     public Product updateProduct(int id, Product product);
     public List<Product> getProuctsOnSale();
     public List<Product> getAllProductsByCategory(String name);
