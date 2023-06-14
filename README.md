@@ -8,6 +8,8 @@ Sa bussiness strane, **Shoe shop** je aplikacjia koja služi za kupovinu obuće.
  - Azra Ahmić
  - Nedina Muratović
  - Muharem Kapo
+ 
+ Link na repozitorij na frontend: https://github.com/nmuratovic3/nwt_frontend
 
 ## Pokretanje projekta
 
