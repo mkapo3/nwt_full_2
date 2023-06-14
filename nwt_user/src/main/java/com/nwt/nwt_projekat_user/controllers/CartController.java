@@ -40,7 +40,10 @@ public class CartController {
     @Transactional
     public GeneralSuccessResponse createCart(@PathVariable Long userId){
         CustomUser customUser = customUserDataService.getUserById(userId);
-        cartDataService.remove(customUser.getCart());
+        Cart oldCart = customUser.getCart();
+        oldCart.setDeleted(true);
+        cartDataService.createOrUpdateCart(oldCart);
+
         Cart cart = new Cart();
         customUser.setCart(cart);
         cart.setCartProducts(new HashSet<>());
